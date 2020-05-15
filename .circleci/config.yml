@@ -9,8 +9,6 @@ jobs:
           docker_layer_caching: false
       - run: |
           docker build --build-arg GIT_HASH=$CIRCLE_SHA1 -t logindotgov/pretendidp:$CIRCLE_BRANCH -t logindotgov/pretendidp:$CIRCLE_SHA1 .
-      - run: |
-          # push it to the repo if the test passes
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
           docker push logindotgov/pretendidp:$CIRCLE_SHA1
           docker push logindotgov/pretendidp:$CIRCLE_BRANCH
