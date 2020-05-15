@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          docker_layer_caching: true
+          docker_layer_caching: false
       - run: |
           docker build --build-arg GIT_HASH=$CIRCLE_SHA1 -t logindotgov/pretend-idp:$CIRCLE_BRANCH -t logindotgov/pretend-idp:$CIRCLE_SHA1 .
       - run: |
