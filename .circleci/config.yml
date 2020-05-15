@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6-buster
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: |
+          docker build --build-arg GIT_HASH=$CIRCLE_SHA1 -t logindotgov/pretend-idp:$CIRCLE_BRANCH -t logindotgov/pretend-idp:$CIRCLE_SHA1 .
+      - run: |
+          # push it to the repo if the test passes
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+          docker push logindotgov/pretend-idp:$CIRCLE_SHA1
+          docker push logindotgov/pretend-idp:$CIRCLE_BRANCH
+          if [ "$CIRCLE_BRANCH" = "master" ] ; then
+            docker tag logindotgov/pretend-idp:master logindotgov/pretend-idp:latest
+            docker push logindotgov/pretend-idp:latest
+          fi
+workflows:
+  version: 2
+  release:
+    jobs:
+      - build
